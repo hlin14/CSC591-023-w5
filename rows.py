@@ -80,7 +80,8 @@ class data:
 		#print(obj.name)
 		n = 100 #(should sample?)
 		c = len(obj.name) + 1
-		print("   ".join(list(obj.name.values())) + "    >dom")
+		result = []
+		print(" ".join(list(obj.name.values())) + "    >dom")
 		#print(len(obj.rows))
 		#print(obj.rows)
 		for r1 in range(1, len(obj.rows) + 1):
@@ -90,9 +91,10 @@ class data:
 			for s in range(1, n + 1):
 				row2 = self.another(r1, obj.rows)#to implement
 				s = 1 / n if self.dom(obj, row1, row2) else 0
-				obj.rows[r1][c] = obj.rows[r1][c] + s
-			print(obj.rows[r1])
-		return
+				obj.rows[r1][c] = round(obj.rows[r1][c] + s, 2)
+			#print(list(obj.rows[r1].values()))
+			result.append(list(obj.rows[r1].values()))
+		return result
 
 	def another(self, r1, rows):
 		r2 = r1
@@ -125,39 +127,39 @@ class data:
 @O.k
 def testing():
 	n2 = data()
-	#n2.showDom("weatherLong.csv")
-	n2.showDom("weatherLong.csv")
-	
-	#print(n2.nums[2].same.max)???
+	result2 = n2.showDom("weatherLong.csv")
+
+	result2.sort(key=lambda x: x[5])
+
+	for item in result2:
+		print(item)
+
+	#check the row with the biggest dom is the smallest humid
+	assert result2[-1][2] == 65.0
 
 
-	# print("           "+ "n"+ "  " +"mode" + " " + "frequency")
-	# for sym_idx in n2.syms:
-	# 	print(sym_idx, n2.name[sym_idx],n2.syms[sym_idx].n, n2.syms[sym_idx].mode, n2.syms[sym_idx].most)
-	
-	# assert n2.syms[1].n == 28 and n2.syms[1].mode == 'sunny' and n2.syms[1].most == 10
+	n3 = data()
+	result3 = n3.showDom("auto.csv")
 
-	# print("         "+ "n"+ "  " +"mu" + "    " + "sd")
-	# for num_idx in n2.nums:	
-	# 	print(num_idx, n2.name[num_idx], n2.nums[num_idx].n ,round(n2.nums[num_idx].mu, 2),round(n2.nums[num_idx].sd, 2))
-	
-	# assert n2.nums[2].n == 28 and round(n2.nums[2].mu, 2) == 73.57 and round(n2.nums[2].sd, 2) == 6.45
+	result3.sort(key=lambda x: x[8])
 
-	# print('\n')
+	for item in result3[:10]:
+		print(item)
 
-	# n3 = data()
-	# n3.readRows("auto.csv")
-	# print("              "+ "n"+ "  " +"mode" + " " + "frequency")
-	# for sym_idx in n3.syms:
-	# 	print(sym_idx, n3.name[sym_idx],n3.syms[sym_idx].n, n3.syms[sym_idx].mode, n3.syms[sym_idx].most)
-	# #print(n3.syms[1].n,n3.syms[1].mode,n3.syms[1].most)
-	# assert n3.syms[1].n == 398 and n3.syms[1].most == 204
+	minWeight = float("Inf")
+	maxAcceltn = -float("Inf")
+	maxMPG = -float("Inf")
+	for item in result3[-10:]:
+		print(item)
+		if item[3] < minWeight:
+			minWeight = item[3]
+		if item[4] > maxAcceltn:
+			maxAcceltn = item[4]
+		if item[7] > maxMPG:
+			maxMPG = item[7]
+	assert minWeight == 1613.0 and maxAcceltn == 24.6 and maxMPG == 50.0
+	#test the minWeight, maxAcceltn, maxMPG are in the last 10 item in the result(with the biggest dom)
 
-	# print("                 "+ "n"+ "   " +"mu" + "      " + "sd")
-	# for num_idx in n3.nums:	
-	# 	print(num_idx, n3.name[num_idx], n3.nums[num_idx].n ,round(n3.nums[num_idx].mu, 2),round(n3.nums[num_idx].sd, 2))
-
-	# assert n3.nums[2].n == 398 and round(n3.nums[2].mu, 2) == 193.43 and round(n3.nums[2].sd, 2) == 104.27
 	
 if __name__== "__main__":
   O.report()
