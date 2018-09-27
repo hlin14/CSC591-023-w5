@@ -143,24 +143,39 @@ def testing():
 
 	result3.sort(key=lambda x: x[8])
 
+
+	aveWeigh1 = 0
+	aveWeigh2 = 0
+
+	aveAcce1 = 0
+	aveAcce2 = 0
+
+	aveMpg1 = 0
+	aveMpg2= 0
+
 	for item in result3[:10]:
+		aveWeigh1 += item[3]
+		aveAcce1 += item[4]
+		aveMpg1 += item[7]
 		print(item)
 
-	minWeight = float("Inf")
-	maxAcceltn = -float("Inf")
-	maxMPG = -float("Inf")
+	aveWeigh1 /= 10
+	aveAcce1 /= 10
+	aveMpg1 /= 10
+
 	for item in result3[-10:]:
+		aveWeigh2 += item[3]
+		aveAcce2 += item[4]
+		aveMpg2 += item[7]
 		print(item)
-		if item[3] < minWeight:
-			minWeight = item[3]
-		if item[4] > maxAcceltn:
-			maxAcceltn = item[4]
-		if item[7] > maxMPG:
-			maxMPG = item[7]
-	assert minWeight == 1613.0 and maxAcceltn == 24.6 and maxMPG == 50.0
-	#test the minWeight, maxAcceltn, maxMPG are in the last 10 item in the result(with the biggest dom)
 
+	aveWeigh2 /= 10
+	aveAcce2 /= 10
+	aveMpg2 /= 10
 	
+	assert aveWeigh1 > aveWeigh2 and aveAcce1 < aveAcce2 and aveMpg1 < aveMpg2
+
+
 if __name__== "__main__":
   O.report()
 

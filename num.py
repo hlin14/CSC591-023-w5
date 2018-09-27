@@ -6,8 +6,8 @@ class num:
 		self.n = 0
 		self.mu = 0
 		self.m2 = 0
-		self.lo = 10 ^ 32
-		self.hi = -10 ^ 32
+		self.lo = 10 ** 32
+		self.hi = -10 ** 32
 		self.sd = 0
 		self.same = sample(maxNumber)
 
