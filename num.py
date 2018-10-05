@@ -36,6 +36,7 @@ class num:
 			return x
 		if self.n == 1:
 			return x
+		d = x - self.mu
 		self.n -= 1
 		self.mu = self.mu - d / self.n
 		self.m2 = self.m2 - d * (x - self.mu)
@@ -48,7 +49,7 @@ class num:
 
 	def numXpect(i, j):
 		n = i.n + j.n + 0.0001
-		return i.n / n * i.sd + j.n / n + j.sd
+		return i.n / n * i.sd + j.n / n * j.sd
 @O.k
 def testing():
 	num_list = [4,10,15,38,54,57,62,83,100,100,174,190,215,225,233,250,

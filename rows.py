@@ -2,6 +2,7 @@ from num import num
 from sym import sym
 import re
 import random
+import operator
 from testEngine import O
 
 class data:
@@ -124,57 +125,160 @@ class data:
 	def showDom(self, fname):
 		return self.doms(self.readRows(fname))
 
+
+
+	def unsuper(self, obj):
+		rows = obj.rows
+		enough = len(rows) ** 0.5 #0.5 is magic number
+		#print(enough)
+		def band(c, lo, hi):
+			if lo == 1:
+				return ".." + str(rows[hi][c])
+			elif hi == most:   #most!?!!!!!!!
+				return str(rows[lo][c]) + ".."
+			else:
+				return str(rows[lo][c]) + ".." + str(rows[hi][c])
+
+		def argmin(c, lo, hi):
+			cut = None
+			if (hi - lo > 2 * enough):
+				l, r = num(), num()
+				for i in range(lo, hi + 1):
+					r.numInc(rows[i][c])
+				#get the total sd first
+				best = r.sd
+
+				#now, decreseInc from r and increase from left, to find the best sd
+				for i in range(lo, hi + 1):
+					x = rows[i][c]
+					l.numInc(x)
+					r.numDec(x)
+					if l.n >= enough and r.n >= enough:
+						tmp = num.numXpect(l, r) * 1.05  #1.05 is margin which is magic number
+						if tmp < best:
+							cut, best = i, tmp
+			return cut
+
+
+
+		def cuts(c, lo, hi, pre):
+			#?
+			#txt = pre + str(obj.rows[lo][c]) + '..' + str(obj.rows[hi][c])
+			#print("cut!!!!!!!!")
+			cut = argmin(c, lo, hi)
+			if cut:
+				#? fyi
+				cuts(c, lo, cut, pre + "|..")
+				cuts(c, cut + 1, hi, pre + "|..")
+			else:#stop cut
+				b = band(c, lo, hi)
+				#modify the row into b
+				for r in range(lo, hi + 1):
+					rows[r][c] = b
+
+		#to find the largest number not '?' from the right
+		def stop(c, t): #t is rows, c is col
+			for i in range(len(t) - 1, -1, -1):
+				if t[i][c] != '?':
+					return i + 1
+				else:
+					return 0
+
+		def sortRow(c, rows):
+			dic = {}
+
+			rows = sorted(rows.items(), key = lambda x:x[1][c])
+			
+			i = 1
+			for item in rows:
+				key, val = item
+				#print(key, val)
+				dic[i] = val
+				i += 1
+
+			# for key, val in dic.items():
+			# 	print(key, val)
+			return dic
+
+
+		for c in obj.indeps:
+			if obj.nums.get(c, "") != "":
+
+
+				# for key, val in obj.rows.items():
+				# 	print(key, val)
+				# print("====")
+
+				rows = sortRow(c, rows)  #ksort(c, rows)
+
+				most = stop(c, rows)
+				#print("most:", most)
+				cuts(c, 1, most, "|..")
+
+
+				for key, val in rows.items():
+					print(key, val)
+
+
+		return self
+
 @O.k
 def testing():
-	n2 = data()
-	result2 = n2.showDom("weatherLong.csv")
 
-	result2.sort(key=lambda x: x[5])
+	# #part1
+	# n2 = data()
+	# result2 = n2.showDom("weatherLong.csv")
 
-	for item in result2:
-		print(item)
+	# result2.sort(key=lambda x: x[5])
 
-	#check the row with the biggest dom is the smallest humid
-	assert result2[-1][2] == 65.0
+	# for item in result2:
+	# 	print(item)
 
-
-	n3 = data()
-	result3 = n3.showDom("auto.csv")
-
-	result3.sort(key=lambda x: x[8])
+	# #check the row with the biggest dom is the smallest humid
+	# assert result2[-1][2] == 65.0
 
 
-	aveWeigh1 = 0
-	aveWeigh2 = 0
+	# n3 = data()
+	# result3 = n3.showDom("auto.csv")
 
-	aveAcce1 = 0
-	aveAcce2 = 0
+	# result3.sort(key=lambda x: x[8])
 
-	aveMpg1 = 0
-	aveMpg2= 0
 
-	for item in result3[:10]:
-		aveWeigh1 += item[3]
-		aveAcce1 += item[4]
-		aveMpg1 += item[7]
-		print(item)
+	# aveWeigh1 = 0
+	# aveWeigh2 = 0
 
-	aveWeigh1 /= 10
-	aveAcce1 /= 10
-	aveMpg1 /= 10
+	# aveAcce1 = 0
+	# aveAcce2 = 0
 
-	for item in result3[-10:]:
-		aveWeigh2 += item[3]
-		aveAcce2 += item[4]
-		aveMpg2 += item[7]
-		print(item)
+	# aveMpg1 = 0
+	# aveMpg2= 0
 
-	aveWeigh2 /= 10
-	aveAcce2 /= 10
-	aveMpg2 /= 10
+	# for item in result3[:10]:
+	# 	aveWeigh1 += item[3]
+	# 	aveAcce1 += item[4]
+	# 	aveMpg1 += item[7]
+	# 	print(item)
+
+	# aveWeigh1 /= 10
+	# aveAcce1 /= 10
+	# aveMpg1 /= 10
+
+	# for item in result3[-10:]:
+	# 	aveWeigh2 += item[3]
+	# 	aveAcce2 += item[4]
+	# 	aveMpg2 += item[7]
+	# 	print(item)
+
+	# aveWeigh2 /= 10
+	# aveAcce2 /= 10
+	# aveMpg2 /= 10
 	
-	assert aveWeigh1 > aveWeigh2 and aveAcce1 < aveAcce2 and aveMpg1 < aveMpg2
+	# assert aveWeigh1 > aveWeigh2 and aveAcce1 < aveAcce2 and aveMpg1 < aveMpg2
 
+	#part2
+	n4 = data()
+	obj = n4.unsuper(n4.readRows("weatherLong.csv"))
+	#print(obj.indeps) [1, 2, 4]
 
 if __name__== "__main__":
   O.report()
